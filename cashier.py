@@ -20,30 +20,43 @@ Banco_De_Dados = [
     {"id":9312, "nome": "Sabonete", "preco": 2.00}
 ]
 
-cartao = [
+cartao_debito = [
     {"id":63137858, "banco": "NuBank - Débito", "senha":5236},
+]
+
+cartao_credito = [
     {"id":82482567, "banco": "NuBank - Crédito", "senha":6137}
 ]
 
 
 compras = []
 soma_produtos = []
+last_item = []
 
-def pagamento_card():
-    while True:
-            card_pag = int(input("Insira seu cartão | ID: "))
-            for card in cartao:
-                if card["id"] == card_pag:
-                    print("Selecionado: ", card["banco"])
-                    password = int(input("Digite sua senha: "))
-                    if password == card["senha"]:
-                        print("Processando pagamento...")
-                        time.sleep(5)
-                        print("Compra finalizada com sucesso!")
-                        break
-                    else:
-                        print("[ERROR] Senha incorreta!")
-   
+def pagamento_card(card):
+    cont = 1
+    while cont == 1:
+    
+        card_pag = int(input("Insira seu cartão | ID: "))
+        
+        for c in card:
+            if c["id"] == card_pag:
+                print("Selecionado: ", c["banco"])
+                password = int(input("Digite sua senha: "))
+                if password == c["senha"]:
+                    print("Processando pagamento...")
+                    time.sleep(5)
+                    print("Compra finalizada com sucesso!") 
+                    cont += 1
+                else:
+                    print("[ERROR] Senha incorreta!")
+             
+            else:
+                print("[ERROR] Não autorizado!")
+    
+            
+        
+    
 if start == "":
     print("""
     Opções:
@@ -71,9 +84,11 @@ if escolha == 1:
             remove = int(input("[0]Remove Last | Item number: "))
             if remove == 0:
                 ad_produto = compras.pop()
+                ad_produto = last_item.pop()
             
             else:
                 ad_produto = compras.pop(remove - 1)
+                ad_produto = last_item.pop(remove - 1)
         
         # Adicionando itens na lista:
         else:
@@ -84,14 +99,19 @@ if escolha == 1:
                         "preco": produtos["preco"]
                     })
             
-            last_item = []
+            
             last_item.append(compras[-1])
-            for select_prod in last_item:
-                soma_produtos.append(select_prod["preco"])
+    
+    for select_prod in last_item:
+        soma_produtos.append(select_prod["preco"])
+                
+    os.system("cls")
+    
+    # Forma de pagamento
     
     print("===== Forma de pagamento =====")
     soma = sum(soma_produtos)
-    print("A compra ficou por: R${}".format(soma))
+    print("A compra ficou por: R${:.2f}".format(soma))
     print("""
     [1] Dinheiro
     [2] Pix
@@ -112,15 +132,16 @@ if escolha == 1:
         print("Compra finalizada com sucesso!")
         
     elif opc == 3:
-        pagamento_card()
+        pagamento_card(cartao_debito)
+        
         
     elif opc == 4:
         print("Você pode parcelar em até 6x sem juros!")
         parcela = int(input("Em quantas vezes você deseja parcelar: "))
         soma = sum(soma_produtos)
         res = soma / parcela
-        print("Cada parcela ficou por {:2f}".format(res))
-        pagamento_card()
+        print("Cada parcela ficou por {:.2f}".format(res))
+        pagamento_card(cartao_credito)
         
 else:
     print("[ERROR] Você deve pressionar [Enter] para começar!")
